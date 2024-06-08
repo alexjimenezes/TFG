@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Beat Tap Analyzer</title>
+  <link rel="stylesheet" href="analyzer.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@sgratzl/chartjs-chart-boxplot@4.3.1/build/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.0"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Beats & Taps Analyzer</h1>
+
+  <div>
+    <label for="beat-audio">Upload Beat Audio:</label>
+    <input type="file" id="beat-audio">
+  </div>
+  <div>
+    <label for="tap-audio">Upload Tap Audio:</label>
+    <input type="file" id="tap-audio">
+  </div>
+  <div>
+    <label for="combined-audio">Upload Combined Audio:</label>
+    <input type="file" id="combined-audio">
+  </div>
+
+  <div class="range-label">
+    <label for="std-multiplier">Standard Deviation Multiplier:</label>
+    <input type="range" id="std-multiplier" min="0" max="3" step="0.1" value="1.5">
+    <span id="std-multiplier-value">2</span>
+  </div>
+
+  <div class="range-label">
+    <label for="matching-bins">Matching Bins %:</label>
+    <input type="range" id="matching-bins" min="0" max="100" step="1" value="98">
+    <span id="matching-bins-value">98%</span>
+  </div>
+
+  <div>
+    <label for="db-tolerance">dB Tolerance:</label>
+    <input type="number" id="db-tolerance" step="0.5" value="2">
+  </div>
+
+  <div>
+    <label for="fft-window-size">FFT Window Size:</label>
+    <select id="fft-window-size">
+      <option value="128">128</option>
+      <option value="256">256</option>
+      <option value="512">512</option>
+      <option value="1024" selected>1024</option>
+      <option value="2048" >2048</option>
+      <option value="4096">4096</option>
+      <option value="8192">8192</option>
+    </select>
+  </div>
+
+  <button id="analyze-button">Analyze</button>
+
+  <canvas id="frequency-chart" width="800" height="400"></canvas>
+  <div id="results"></div>
+  <canvas id="beat-tap-chart" width="800" height="125"></canvas>
+</div>
+
+<script src="js/audio-analyzer.js"></script>
+<script src="js/plot.js"></script>
+
+<script>
+  document.getElementById('std-multiplier').addEventListener('input', function() {
+    document.getElementById('std-multiplier-value').innerText = this.value;
+  });
+
+  document.getElementById('matching-bins').addEventListener('input', function() {
+    document.getElementById('matching-bins-value').innerText = this.value + '%';
+  });
+</script>
+
+</body>
+</html>

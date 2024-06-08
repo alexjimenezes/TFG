@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Web Audio Recording Tests (Simpler)</title>
+
+    <link rel="stylesheet" href="piano.css">
+
+    <style>
+        button.btn {
+            margin: 0.25rem;
+            width: 15rem;
+        }
+
+        audio {
+            width: 100%;
+        }
+
+        #recording-meter {
+            height: 10rem;
+            margin: 1rem 0;
+            width: 4rem;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<main role="main" class="container m-2">
+    <h1>Piano Player Configuration</h1>
+    <div class="input-group">
+        <label for="note">Note: </label>
+        <div id="note-buttons" class="note-buttons">
+            <button onclick="setNote('C')">C</button>
+            <button onclick="setNote('D')">D</button>
+            <button onclick="setNote('E')">E</button>
+            <button onclick="setNote('F')">F</button>
+            <button onclick="setNote('G')">G</button>
+            <button onclick="setNote('A')">A</button>
+            <button onclick="setNote('B')">B</button>
+        </div>
+        <input type="hidden" id="note" value="C">
+    </div>
+    <div class="input-group">
+        <label for="repetitions">Repetitions: </label>
+        <input type="number" id="repetitions" value="4">
+    </div>
+    <div class="input-group">
+        <label for="duration">Duration (ms): </label>
+        <input type="number" id="duration" value="225">
+    </div>
+    <div class="input-group">
+        <label for="silenceDuration">Silence Duration (ms): </label>
+        <input type="number" id="silenceDuration" value="500">
+    </div>
+    <div class="input-group">
+        <label for="accents">Accents (comma separated, e.g., 0,1,0): </label>
+        <input type="text" id="accents" value="0">
+    </div>
+    <div class="button-group">
+        <button id="btn-play-melody" type="button" class="btn btn-primary">Play Melody</button>
+        <button id="btn-stop-melody" type="button" class="btn btn-primary">Stop Melody</button>
+    </div>
+    <div class="button-group">
+        <button id="btn-record" type="button" class="btn btn-primary">Record</button>
+        <button id="btn-stop" type="button" class="btn btn-primary">Stop</button>
+    </div>
+    <div class="button-group">
+        <button id="btn-play-and-record" type="button" class="btn btn-primary">Play & Record</button>
+    </div>
+
+
+    <div class="row">
+        <div style="margin: .25rem">
+            <span id="debug-txt"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div id="recording-meter"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h3>Recordings</h3>
+            <div id="recordings-cont">
+            </div>
+        </div>
+    </div>
+
+</main>
+<script src="js/WebAudioPeakMeter.js"></script>
+<script src="js/encoder-wav-worker.js"></script>
+<script src="js/RecorderService.js"></script>
+<script src="js/pianoPlayer.js"></script>
+<script src="js/app.js"></script>
+<script>
+    window.onload = function (e) {
+        let app = new App();
+        app.init()
+    }
+</script>
+<script>
+    function setNote(note) {
+        document.getElementById('note').value = note;
+        const buttons = document.querySelectorAll('#note-buttons button');
+        buttons.forEach(button => {
+            button.style.backgroundColor = (button.innerText === note) ? '#4CAF50' : '#f0f0f0';
+            button.style.color = (button.innerText === note) ? 'white' : 'black';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setNote('C'); // Set default note
+    });
+</script>
+
+</body>
+</html>

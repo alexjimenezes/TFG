@@ -246,7 +246,7 @@ class AudioProcessor {
             let peakTime = peakTimes[i];
             let j;
             for (j = 1; j < 10; j++) {
-                if (peakTimes[i+j] - peakTimes[i] > peakDuration * 10) {
+                if (peakTimes[i+j] - peakTimes[i] > 0.2) {
                     break;
                 }
                 if (peakPowers[i+j] > maxPower) {
@@ -328,7 +328,7 @@ class Analyzer {
     calculatePrecision(beats, taps) {
         return taps.map(tap => {
             const closestBeat = beats.reduce((prev, curr) => Math.abs(curr - tap) < Math.abs(prev - tap) ? curr : prev);
-            return Math.abs(closestBeat - tap);
+            return Math.abs(closestBeat - tap) * 1000;
         });
     }
 

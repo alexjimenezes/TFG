@@ -2,7 +2,7 @@ class AudioProcessor {
     constructor(audioContext) {
         this.audioContext = audioContext;
         this.fftWindowSize = parseInt(document.getElementById('fft-window-size').value);
-        this.hopSize = this.fftWindowSize / 2; // 50% overlap
+        this.hopSize = this.fftWindowSize / 8; // 50% overlap
         this.frequencyDbPieces = [];
         this.frequencyPiecesCount = 0;
         this.frequencyPiecesMaxCount = 1;
@@ -216,7 +216,7 @@ class AudioProcessor {
                 peakPowers.push(avgPower);
             }
         }
-        console.log(peakPowers);
+        // console.log(peakPowers);
         // return peakTimes;
         return this.selectPeaks(peakTimes, peakPowers, audioBuffer.sampleRate);
     }
@@ -240,12 +240,13 @@ class AudioProcessor {
     // Therefore, from each group we only keep the peak with the highest dBs across the reference frequencies.
     selectPeaks(peakTimes, peakPowers, sampleRate) {
         const filteredPeaks = [];
-        const peakDuration = this.fftWindowSize / sampleRate;
+        const peakGroupSize = Math.ceil(150 / (this.hopSize / sampleRate * 1000));
+        console.log("Peak detection resolution (ms): " + this.hopSize / sampleRate * 1000);
         for (let i = 0; i < peakTimes.length; i++) {
             let maxPower = peakPowers[i];
             let peakTime = peakTimes[i];
             let j;
-            for (j = 1; j < 10; j++) {
+            for (j = 1; j < peakGroupSize; j++) {
                 if (peakTimes[i+j] - peakTimes[i] > 0.2) {
                     break;
                 }
@@ -273,12 +274,13 @@ class BeatDetector {
         this.processor = new AudioProcessor(this.audioContext);
         await this.processor.analyzeFrequency(beatAudioBuffer);
         this.processor.getFrequenciesAboveThreshold();
-        console.log(this.processor.referenceFreqIdx);
+        // console.log(this.processor.referenceFreqIdx);
     }
 
     // Detect beats in the audio buffer using calibrated beat frequencies
     async detectBeats(audioBuffer) {
         const beatTimes = await this.processor.detectPeakTimes(audioBuffer);
+        console.log("Beats (ms): " + beatTimes.map(b => b.toFixed(4)).join(', '))
         return beatTimes;
     }
 }
@@ -295,12 +297,13 @@ class TapDetector {
         this.processor = new AudioProcessor(this.audioContext);
         await this.processor.analyzeFrequency(tapAudioBuffer);
         this.processor.getFrequenciesAboveThreshold();
-        console.log(this.processor.referenceFreqIdx);
+        // console.log(this.processor.referenceFreqIdx);
     }
 
     // Detect taps in the audio buffer using calibrated tap frequencies
     async detectTaps(audioBuffer) {
         const tapTimes = await this.processor.detectPeakTimes(audioBuffer);
+        console.log("Taps (ms): " + tapTimes.map(b => b.toFixed(4)).join(', '))
         return tapTimes;
     }
 }
